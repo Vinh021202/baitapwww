@@ -12,7 +12,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "customer")
 @NamedQueries({
-       // @NamedQuery(name = "Customer.getAll", query ="")
+        @NamedQuery(name = "Customer.getAll", query =" select c from Customer  c ")
 })
 public class Customer {
     @Id
