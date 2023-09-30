@@ -1,66 +1,70 @@
 package models;
 
+import convertes.EmployeeStatusConverter;
 import enums.EmployeeStatus;
+import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.persistence.*;
 
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @NamedQueries({
-            @NamedQuery(name = "Employee.getAll", query = "select  e from Employee  e where  e.status= 1 "),
-           @NamedQuery(name = "Employee.updateStatus", query = "SELECT e from Employee e WHERE (e.id = :id )")
+        @NamedQuery(name = "Employee.getAll", query = " SELECT e from Employee e "),
+        @NamedQuery(name = "Employee.updateStatus", query = "UPDATE Employee SET status = :status WHERE id = :id")
 })
 @Entity
 @Table(name = "employee")
 public class Employee {
     @Id
+    @Column(name = "emp_id", columnDefinition = "BIGINT(20)")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "emp_id")
-    private int id;
-    @Column(name = "full_name", length = 150, nullable = false)
-    private String full_name;
-    @Column(nullable = false, name = "dob")
-    private LocalDate dod;
-    @Column(name = "email", length = 150, unique = true)
-    private String email;
-    @Column(name = "phone", length = 15, nullable = false)
-    private String phone;
-    @Column(name = "address", length = 250, nullable = false)
+    private long id;
+    @Column(columnDefinition = "VARCHAR(250)", nullable = false)
     private String address;
-    @Column(name = "status", nullable = false)
+    @Column(columnDefinition = "DATETIME(6)", nullable = false)
+    @JsonbDateFormat(value = "yyyy-MM-dd")
+    private LocalDateTime dob;
+    @Column(columnDefinition = "VARCHAR(150)")
+    private String email;
+    @Column(name = "full_name", columnDefinition = "VARCHAR(150)", nullable = false)
+    private String fullname;
+    @Column(columnDefinition = "VARCHAR(15)", nullable = false)
+    private String phone;
+    @Column(columnDefinition = "INT(11)", nullable = false)
+    @Convert(converter = EmployeeStatusConverter.class)
     private EmployeeStatus status;
 
 
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     private List<Order> lstOrder = new ArrayList<>();
 
     public Employee() {
     }
 
-    public Employee(int id, String full_name, LocalDate dod, String email, String phone,
-                    String address, EmployeeStatus status, List<Order> lstOrder) {
+    public Employee(long id, String address, LocalDateTime dob, String email, String fullname,
+                    String phone, EmployeeStatus status, List<Order> lstOrder) {
         this.id = id;
-        this.full_name = full_name;
-        this.dod = dod;
-        this.email = email;
-        this.phone = phone;
         this.address = address;
+        this.dob = dob;
+        this.email = email;
+        this.fullname = fullname;
+        this.phone = phone;
         this.status = status;
         this.lstOrder = lstOrder;
     }
 
-    public int getId() {
+
+    public long getId() {
         return id;
     }
 
-    public String getFull_name() {
-        return full_name;
+    public LocalDateTime getDob() {
+        return dob;
     }
 
-    public LocalDate getDod() {
-        return dod;
+    public String getFullname() {
+        return fullname;
     }
 
     public String getEmail() {
@@ -87,11 +91,11 @@ public class Employee {
     public String toString() {
         return "Employee{" +
                 "id=" + id +
-                ", full_name='" + full_name + '\'' +
-                ", dod=" + dod +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
+                ", dob=" + dob +
+                ", email='" + email + '\'' +
+                ", fullname='" + fullname + '\'' +
+                ", phone='" + phone + '\'' +
                 ", status=" + status +
                 ", lstOrder=" + lstOrder +
                 '}';

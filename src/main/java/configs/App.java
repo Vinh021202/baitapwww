@@ -1,20 +1,12 @@
 package configs;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Persistence;
+import db.Connection;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.core.Application;
 
-public class App {
-    public static void main(String[] args) {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("week-leck02");
-        EntityManager entityManager =  emf.createEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-            transaction.commit();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+@ApplicationPath("/api")
+public class App extends Application {
+    public App() {
+        Connection.getInstance().getEntityManager();
     }
 }
